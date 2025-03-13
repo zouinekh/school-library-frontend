@@ -1,25 +1,32 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, h } from 'vue'
 import { message } from 'ant-design-vue'
-import { useRouter } from 'vue-router'
 import CheckoutForm from '@/components/CheckoutForm.vue'
 import libraryService from '../api/libraryService'
 import type { Checkout, PaginatedResponse } from '../types/library'
-import { h } from 'vue'
-import { PlusOutlined } from '@ant-design/icons-vue'
-const router = useRouter()
+import type { ColumnType } from 'ant-design-vue/es/table'
+import { PlusOutlined, UndoOutlined } from '@ant-design/icons-vue'
+import { useRouter } from 'vue-router'
+
 const checkouts = ref<Checkout[]>([])
 const loading = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(10)
 const totalItems = ref(0)
 const showForm = ref(false)
-const editingCheckout = ref<Checkout | null>(null)
+const searchQuery = ref('')
+const isSearching = ref(false)
+
+const router = useRouter()
 
 const loadCheckouts = async () => {
   loading.value = true
   try {
-    const response = await libraryService.getCheckouts(currentPage.value, pageSize.value)
+    const response = await libraryService.getCheckouts(
+      currentPage.value,
+      pageSize.value,
+      searchQuery.value,
+    )
     const data = response.data as PaginatedResponse<Checkout>
     checkouts.value = data.data
     totalItems.value = data.pagination.totalItems
@@ -34,8 +41,8 @@ const handlePageChange = (page: number) => {
   currentPage.value = page
   loadCheckouts()
 }
+
 const returnBook = async (id: string) => {
-  console.log(id)
   try {
     await libraryService.returnBook(id)
     message.success('Book returned successfully')
@@ -52,20 +59,62 @@ const formatDate = (dateString: string | Date | undefined) => {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
   })
 }
 
-const toggleForm = () => {
-  showForm.value = !showForm.value
-  editingCheckout.value = null
-}
-const handleSuccess = () => {
-  message.success('Checkout recorded successfully!')
-  showForm.value = false
+const handleSearch = () => {
+  isSearching.value = true
+  currentPage.value = 1
   loadCheckouts()
+  setTimeout(() => {
+    isSearching.value = false
+  }, 1000)
 }
+
+const handleSearchChange = (e: Event) => {
+  const value = (e.target as HTMLInputElement).value
+  searchQuery.value = value
+  if (value.length > 2 || value.length === 0) {
+    currentPage.value = 1
+    loadCheckouts()
+  }
+}
+
+const columns: ColumnType<Checkout>[] = [
+  { title: 'Student Name', dataIndex: 'studentName', key: 'studentName' },
+  { title: 'Book ID', dataIndex: 'bookId', key: 'bookId' },
+  {
+    title: 'Checkout Date',
+    dataIndex: 'checkoutDate',
+    key: 'checkoutDate',
+    customRender: ({ text }) => formatDate(text),
+  },
+  {
+    title: 'Return Date',
+    dataIndex: 'returnDate',
+    key: 'returnDate',
+    customRender: ({ text }) => (text ? formatDate(text) : 'Not returned yet'),
+  },
+  {
+    title: 'Status',
+    key: 'status',
+    customRender: ({ record }) => {
+      return h(
+        'a-tag',
+        {
+          color: record.returnDate ? 'green' : 'blue',
+        },
+        record.returnDate ? 'Returned' : 'Checked Out',
+      )
+    },
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+    fixed: 'right',
+    width: 120,
+  },
+]
 
 onMounted(() => {
   loadCheckouts()
@@ -74,95 +123,82 @@ onMounted(() => {
 
 <template>
   <div class="checkout-container">
-    <a-page-header title="Book Checkouts" @back="() => router.push('/')" class="page-header" />
-
-    <div class="checkout-actions">
-      <a-button type="primary" @click="toggleForm">
-        <PlusOutlined />
-        {{ showForm ? 'Hide Form' : 'New Checkout' }}
-      </a-button>
+    <div class="page-header">
+      <h2>Book Checkouts</h2>
     </div>
-    <a-card v-if="showForm" class="checkout-card">
-      <p class="checkout-description">
-        Use this form to check out a book to a student. Enter the student's name and the book ID.
-      </p>
-      <checkout-form @success="handleSuccess" />
-    </a-card>
-    <a-card class="checkout-card" title="All Checkouts">
+
+    <a-card class="checkout-card">
       <a-spin :spinning="loading">
-        <template v-if="checkouts.length === 0">
-          <a-empty description="No checkouts found" />
-        </template>
-        <template v-else>
-          <a-table
-            :dataSource="checkouts"
-            :pagination="false"
-            :rowKey="(record: any) => record.id"
-            :rowClassName="(record: any) => (record.returnDate ? 'returned-row' : 'active-row')"
-            bordered
-            class="checkout-table"
-          >
-            <a-table-column title="Student Name" dataIndex="studentName" />
-            <a-table-column title="Book ID" dataIndex="bookId" />
-            <a-table-column
-              title="Checkout Date"
-              dataIndex="checkoutDate"
-              :customRender="({ text }: any) => formatDate(text)"
+        <div class="header">
+          <div class="search-container">
+            <a-input-search
+              v-model:value="searchQuery"
+              placeholder="Search checkouts..."
+              enter-button
+              :loading="isSearching"
+              @search="handleSearch"
+              @input="handleSearchChange"
+              allow-clear
             />
-            <a-table-column
-              title="Return Date"
-              dataIndex="returnDate"
-              :customRender="({ text }: any) => (text ? formatDate(text) : 'Not returned yet')"
-            />
-            <a-table-column
-              title="Status"
-              :customRender="
-                ({ record }: any) => {
-                  return record.returnDate
-                    ? h('a-tag', { color: 'green' }, 'Returned')
-                    : h('a-tag', { color: 'blue' }, 'Checked Out')
-                }
-              "
-            />
+          </div>
 
-            <a-table-column
-              title="Actions"
-              :customRender="
-                ({ record }: any) => {
-                  if (!record.returnDate) {
-                    return h(
-                      'a-button',
-                      {
-                        type: 'primary',
-                        danger: true,
-                        size: 'middle',
-                        onClick: () => returnBook(record._id),
-                        class: 'action-button',
-                        style: { display: 'flex', alignItems: 'center', gap: '8px' },
-                      },
-                      [
-                        h('span', { class: 'anticon' }, h('i', { class: 'fas fa-undo' })),
-                        h('span', 'Return Book'),
-                      ],
-                    )
-                  }
-                  return null
-                }
-              "
-            />
-          </a-table>
+          <a-button type="primary" @click="showForm = true">
+            <template #icon><plus-outlined /></template>
+            New Checkout
+          </a-button>
+        </div>
 
-          <a-pagination
-            v-model:current="currentPage"
-            :pageSize="pageSize"
-            :total="totalItems"
-            @change="handlePageChange"
-            show-less-items
-            class="pagination"
-          />
-        </template>
+        <a-table
+          :data-source="checkouts"
+          :columns="columns"
+          :row-key="(record: any) => record.id"
+          :pagination="false"
+          :scroll="{ x: 800 }"
+          class="checkout-table"
+          :rowClassName="(record: any) => (record.returnDate ? 'returned-row' : 'active-row')"
+        >
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'actions'">
+              <div class="action-buttons-container">
+                <a-button
+                  v-if="!record.returnDate"
+                  class="action-btn return-btn"
+                  @click="returnBook(record._id)"
+                >
+                  Return
+                  <undo-outlined />
+                </a-button>
+              </div>
+            </template>
+          </template>
+        </a-table>
+
+        <a-pagination
+          v-model:current="currentPage"
+          :pageSize="pageSize"
+          :total="totalItems"
+          @change="handlePageChange"
+          show-less-items
+          class="pagination"
+        />
       </a-spin>
     </a-card>
+
+    <a-modal
+      v-model:visible="showForm"
+      title="New Checkout"
+      :footer="null"
+      @cancel="showForm = false"
+    >
+      <CheckoutForm
+        @success="
+          () => {
+            showForm = false
+            loadCheckouts()
+          }
+        "
+      />
+    </a-modal>
   </div>
 </template>
 
@@ -174,15 +210,19 @@ onMounted(() => {
 
 .page-header {
   margin-bottom: 20px;
-  background: white;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.checkout-actions {
-  margin-bottom: 20px;
+.header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.search-container {
+  flex: 2;
+  max-width: 80%;
 }
 
 .checkout-card {
@@ -191,13 +231,69 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
-.checkout-description {
-  margin-bottom: 20px;
-  color: #666;
+.checkout-table {
+  width: 100%;
+}
+
+:deep(.ant-table-thead > tr > th) {
+  background-color: #f0f7ff;
+  font-weight: bold;
 }
 
 .pagination {
   margin-top: 20px;
   text-align: right;
+}
+
+.action-buttons-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.action-btn {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.view-btn {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.view-btn:hover {
+  background-color: #bae7ff;
+}
+
+.return-btn {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.return-btn:hover {
+  background-color: #d9f7be;
+}
+
+.returned-row {
+  background-color: #f6ffed;
+}
+
+.active-row {
+  background-color: #fff;
 }
 </style>

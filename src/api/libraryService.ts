@@ -39,8 +39,12 @@ export default {
     },
 
     // Checkouts
-    async getCheckouts(page = 1, size = 10): Promise<AxiosResponse<PaginatedResponse<Checkout>>> {
-        return API.get('/checkouts', { params: { page, size } });
+    async getCheckouts(page = 1, size = 10, search = ""): Promise<AxiosResponse<PaginatedResponse<Checkout>>> {
+        const params: Record<string, any> = { page, size };
+        if (search) {
+            params.search = search;
+        }
+        return API.get('/checkouts', { params });
     },
 
     async getBookCheckoutHistory(bookId: string): Promise<AxiosResponse<PaginatedResponse<Checkout>>> {
@@ -54,7 +58,6 @@ export default {
     async returnBook(id: string): Promise<AxiosResponse<Checkout>> {
         return API.patch(`/checkouts/${id}`);
     },
-    // Add this method to your existing libraryService object
     async getDashboardStats(): Promise<AxiosResponse<{
         totalBooks: number;
         availableBooks: number;
