@@ -3,6 +3,7 @@ import DashboardView from '@/views/DashboardView.vue'
 import CheckoutView from '../views/CheckoutView.vue'
 import BookDetailView from '../views/BookDetailView.vue'
 import AddBookView from '../views/AddBookView.vue'
+import BooksView from '@/views/BooksView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -16,14 +17,19 @@ const routes: Array<RouteRecordRaw> = [
     component: CheckoutView
   },
   {
-    path: '/book/:id',
+    path: '/books/:id',
     name: 'BookDetail',
-    component: BookDetailView
+    component: () => import('../views/BookDetailView.vue')
+  },
+  {
+    path: '/books/:id/edit',
+    name: 'EditBook',
+    component: () => import('../views/EditBookView.vue')
   },
   {
     path: '/books',
     name: 'Books',
-    component: DashboardView
+    component: BooksView
   },
   {
     path: '/add-book',

@@ -8,8 +8,12 @@ const API = axios.create({
 
 export default {
     // Books
-    async getBooks(page = 1, size = 10): Promise<AxiosResponse<PaginatedResponse<Book>>> {
-        return API.get('/books', { params: { page, size } });
+    async getBooks(page = 1, size = 10, search = ''): Promise<AxiosResponse<PaginatedResponse<Book>>> {
+        const params: Record<string, any> = { page, size };
+        if (search) {
+            params.search = search;
+        }
+        return API.get('/books', { params });
     },
     async getBook(id: string): Promise<AxiosResponse<Book>> {
         return API.get(`/books/${id}`);
@@ -49,5 +53,14 @@ export default {
 
     async returnBook(id: string): Promise<AxiosResponse<Checkout>> {
         return API.patch(`/checkouts/${id}`);
+    },
+    // Add this method to your existing libraryService object
+    async getDashboardStats(): Promise<AxiosResponse<{
+        totalBooks: number;
+        availableBooks: number;
+        totalCheckouts: number;
+        activeCheckouts: number;
+    }>> {
+        return API.get('/dashboard');
     }
 };

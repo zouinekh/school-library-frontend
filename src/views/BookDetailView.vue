@@ -4,67 +4,25 @@ import { useRoute, useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import libraryService from '../api/libraryService'
 import BookCheckoutHistory from '../components/BookCheckoutHistory.vue'
+
 import type { Book } from '../types/library'
 
 const route = useRoute()
 const router = useRouter()
 const book = ref<Book | null>(null)
 const loading = ref(true)
-const editing = ref(false)
-
-const editForm = ref({
-  title: '',
-  author: '',
-  availableCopies: 0,
-})
-
 onMounted(async () => {
   const bookId = route.params.id as string
   try {
     loading.value = true
     const response = await libraryService.getBook(bookId)
     book.value = response.data
-    if (book.value) {
-      editForm.value = {
-        title: book.value.title,
-        author: book.value.author,
-        availableCopies: book.value.availableCopies,
-      }
-    }
   } catch (error) {
     message.error('Failed to load book details')
   } finally {
     loading.value = false
   }
 })
-
-const startEditing = () => {
-  editing.value = true
-}
-
-const cancelEditing = () => {
-  editing.value = false
-  if (book.value) {
-    editForm.value = {
-      title: book.value.title,
-      author: book.value.author,
-      availableCopies: book.value.availableCopies,
-    }
-  }
-}
-
-const saveChanges = async () => {
-  if (!book.value) return
-
-  try {
-    const response = await libraryService.updateBook(book.value.id, editForm.value)
-    book.value = response.data
-    editing.value = false
-    message.success('Book updated successfully')
-  } catch (error) {
-    message.error('Failed to update book')
-  }
-}
 </script>
 
 <template>
@@ -86,25 +44,6 @@ const saveChanges = async () => {
             <a-tag color="blue">{{ book.id }}</a-tag>
           </a-descriptions-item>
         </a-descriptions>
-      </a-card>
-      <a-card v-if="book && editing" title="Edit Book" class="book-card">
-        <a-form :model="editForm" layout="vertical">
-          <a-form-item label="Title" name="title">
-            <a-input v-model:value="editForm.title" />
-          </a-form-item>
-          <a-form-item label="Author" name="author">
-            <a-input v-model:value="editForm.author" />
-          </a-form-item>
-          <a-form-item label="Available Copies" name="availableCopies">
-            <a-input-number v-model:value="editForm.availableCopies" :min="0" style="width: 100%" />
-          </a-form-item>
-          <a-form-item>
-            <a-space>
-              <a-button type="primary" @click="saveChanges">Save</a-button>
-              <a-button @click="cancelEditing">Cancel</a-button>
-            </a-space>
-          </a-form-item>
-        </a-form>
       </a-card>
       <BookCheckoutHistory v-if="book" :bookId="book.id" />
     </a-spin>
