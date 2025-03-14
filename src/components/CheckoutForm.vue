@@ -20,13 +20,21 @@ const rules = {
 
 const handleSubmit = async () => {
   try {
+    if (form.studentName.trim() === '') {
+      message.error('Student name cannot be empty.')
+      return
+    }
+    if (form.bookId.trim() === '') {
+      message.error('Book ID cannot be empty.')
+      return
+    }
     await libraryService.createCheckout(form)
     message.success('Checkout successful!')
     emit('success')
     form.studentName = ''
     form.bookId = ''
   } catch (error) {
-    message.error('Creating checkout failed.')
+    message.error('There is no available copies for that book at this moment.')
   }
 }
 </script>

@@ -133,7 +133,7 @@ onMounted(() => {
           <div class="search-container">
             <a-input-search
               v-model:value="searchQuery"
-              placeholder="Search checkouts..."
+              placeholder="Search checkouts by student name..."
               enter-button
               :loading="isSearching"
               @search="handleSearch"
