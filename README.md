@@ -40,6 +40,7 @@ The application connects to a backend API running on
 
 ## Project Structure
 
+```PlainText
 school-library-frontend/
 ├── src/
 │ ├── api/ # API service layer
@@ -51,3 +52,4 @@ school-library-frontend/
 │ ├── views/ # Page components
 │ ├── App.vue # Root component
 │ └── main.ts # Application entry point
+```
