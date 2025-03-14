@@ -86,11 +86,7 @@ onMounted(() => {
     <div class="dashboard-header">
       <h1>Library Management Dashboard</h1>
     </div>
-
-    <!-- Dashboard Stats Component -->
     <DashboardStats />
-
-    <!-- Quick Actions Row -->
     <a-row :gutter="[16, 16]" class="quick-actions-row">
       <a-col :span="24">
         <a-card title="Quick Actions" class="dashboard-card quick-actions-card">
@@ -128,6 +124,7 @@ onMounted(() => {
               :total="totalItems"
               @change="handlePageChange"
               show-less-items
+              :showSizeChanger="false"
               class="pagination"
             />
           </a-spin>
@@ -158,7 +155,7 @@ onMounted(() => {
                     </a-list-item-meta>
                     <template #extra>
                       <a-tag :color="item.returnDate ? 'green' : 'blue'">
-                        {{ item.returnDate ? 'Returned' : 'Active' }}
+                        {{ item.returnDate ? 'Returned' : 'Activ e' }}
                       </a-tag>
                     </template>
                   </a-list-item>

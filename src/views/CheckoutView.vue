@@ -7,7 +7,7 @@ import type { Checkout, PaginatedResponse } from '../types/library'
 import type { ColumnType } from 'ant-design-vue/es/table'
 import { PlusOutlined, UndoOutlined } from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
-
+import { Tag } from 'ant-design-vue'
 const checkouts = ref<Checkout[]>([])
 const loading = ref(false)
 const currentPage = ref(1)
@@ -74,7 +74,7 @@ const handleSearch = () => {
 const handleSearchChange = (e: Event) => {
   const value = (e.target as HTMLInputElement).value
   searchQuery.value = value
-  if (value.length > 2 || value.length === 0) {
+  if (value.length > 0) {
     currentPage.value = 1
     loadCheckouts()
   }
@@ -100,11 +100,11 @@ const columns: ColumnType<Checkout>[] = [
     key: 'status',
     customRender: ({ record }) => {
       return h(
-        'a-tag',
+        Tag,
         {
           color: record.returnDate ? 'green' : 'blue',
         },
-        record.returnDate ? 'Returned' : 'Checked Out',
+        record.returnDate ? 'Returned' : 'Active',
       )
     },
   },
@@ -141,7 +141,6 @@ onMounted(() => {
               allow-clear
             />
           </div>
-
           <a-button type="primary" @click="showForm = true">
             <template #icon><plus-outlined /></template>
             New Checkout
@@ -160,14 +159,18 @@ onMounted(() => {
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'actions'">
               <div class="action-buttons-container">
-                <a-button
+                <a-popconfirm
                   v-if="!record.returnDate"
-                  class="action-btn return-btn"
-                  @click="returnBook(record._id)"
+                  title="Are you sure you want to return this book?"
+                  ok-text="Yes"
+                  cancel-text="No"
+                  @confirm="returnBook(record._id)"
                 >
-                  Return
-                  <undo-outlined />
-                </a-button>
+                  <a-button class="action-btn return-btn">
+                    Return
+                    <undo-outlined />
+                  </a-button>
+                </a-popconfirm>
               </div>
             </template>
           </template>
@@ -179,6 +182,7 @@ onMounted(() => {
           :total="totalItems"
           @change="handlePageChange"
           show-less-items
+          :showSizeChanger="false"
           class="pagination"
         />
       </a-spin>

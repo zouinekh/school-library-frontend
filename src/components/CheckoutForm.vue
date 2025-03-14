@@ -26,7 +26,7 @@ const handleSubmit = async () => {
     form.studentName = ''
     form.bookId = ''
   } catch (error) {
-    message.error(error instanceof Error ? error.message : 'Checkout failed')
+    message.error('Creating checkout failed.')
   }
 }
 </script>

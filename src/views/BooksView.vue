@@ -76,6 +76,7 @@ onMounted(() => {
           :total="totalItems"
           @change="handlePageChange"
           show-less-items
+          :showSizeChanger="false"
           class="pagination"
         />
       </a-spin>

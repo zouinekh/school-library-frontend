@@ -21,7 +21,7 @@ const handleSubmit = async () => {
     console.log(form)
     await libraryService.createBook(form)
     message.success('Book added successfully!')
-    router.push('/')
+    router.push('/books')
   } catch (error) {
     message.error(error instanceof Error ? error.message : 'Failed to add book')
   }

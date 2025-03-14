@@ -51,8 +51,8 @@ const columns: ColumnType<Book>[] = [
           title: 'Available Copies',
           dataIndex: 'availableCopies',
           key: 'available',
+
           customRender: ({ record }) => {
-            const color = record.availableCopies > 0 ? 'green' : 'red'
             return h('a-badge', { count: record.availableCopies, color })
           },
         },

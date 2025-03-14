@@ -71,7 +71,14 @@ const cancelEdit = () => {
           </a-form-item>
           <a-form-item>
             <a-space>
-              <a-button type="primary" @click="saveChanges">Save</a-button>
+              <a-popconfirm
+                title="Are you sure you want to save these changes?"
+                ok-text="Yes"
+                cancel-text="No"
+                @confirm="saveChanges"
+              >
+                <a-button type="primary">Save</a-button>
+              </a-popconfirm>
               <a-button @click="cancelEdit">Cancel</a-button>
             </a-space>
           </a-form-item>
