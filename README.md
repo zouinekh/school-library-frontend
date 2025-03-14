@@ -1,23 +1,20 @@
-<<<<<<< HEAD
-# school-library-frontend
-=======
-# school-library-frontend
+# School Library Management App - Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue.js application for managing a school library system. This frontend application allows users to manage books, track checkouts, and view library statistics.
 
-## Recommended IDE Setup
+## Technologies Used
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
+- Vue 3 with Composition API
+- TypeScript
+- Ant Design Vue for UI components
+- Vue Router for navigation
+- Axios for API requests
+- Vite as the build tool
 
 ## Project Setup
+
+1. Clone the repository
+2. Install dependencies:
 
 ```sh
 npm install
@@ -29,9 +26,22 @@ npm install
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+## Features
 
-```sh
-npm run build
-```
->>>>>>> dc0b225 (init commit)
+- Book management (add, edit, delete)
+- Book checkout system
+- Dashboard with library statistics
+- Search functionality
+
+## API Connection
+
+The application connects to a backend API running on
+`http://localhost:3001 `. Make sure the backend server is running before using this application.
+
+## Project Structure
+
+- `/src/api` : API service layer
+- `/src/components` : Reusable Vue components
+- `/src/views` : Page components
+- `/src/router` : Vue Router configuration
+- `/src/types` : TypeScript type definitions
