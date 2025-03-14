@@ -19,15 +19,7 @@ export default {
         return API.get(`/books/${id}`);
     },
     async createBook(book: Partial<Book>): Promise<AxiosResponse<Book>> {
-        const timestamp = Date.now();
-        const randomSuffix = Math.floor(Math.random() * 900) + 100; // 3-digit random number
-        const bookId = `B-${timestamp}${randomSuffix}`;
-        const bookWithId = {
-            ...book,
-            id: bookId
-        };
-
-        return API.put('/books', bookWithId);
+        return API.put('/books', book);
     },
 
     async updateBook(id: string, book: Partial<Book>): Promise<AxiosResponse<Book>> {

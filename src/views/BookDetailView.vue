@@ -41,11 +41,11 @@ onMounted(async () => {
             />
           </a-descriptions-item>
           <a-descriptions-item label="ID" span="3">
-            <a-tag color="blue">{{ book.id }}</a-tag>
+            <a-tag color="blue">{{ book._id }}</a-tag>
           </a-descriptions-item>
         </a-descriptions>
       </a-card>
-      <BookCheckoutHistory v-if="book" :bookId="book.id" />
+      <BookCheckoutHistory v-if="book" :bookId="book._id" />
     </a-spin>
   </div>
 </template>

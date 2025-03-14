@@ -18,7 +18,7 @@ const editForm = ref({
 
 const saveChanges = async () => {
   try {
-    const response = await libraryService.updateBook(props.book.id, editForm.value)
+    const response = await libraryService.updateBook(props.book._id, editForm.value)
     emit('update:book', response.data)
     message.success('Book updated successfully')
   } catch (error) {

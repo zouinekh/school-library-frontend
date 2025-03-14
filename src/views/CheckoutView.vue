@@ -74,7 +74,7 @@ const handleSearch = () => {
 const handleSearchChange = (e: Event) => {
   const value = (e.target as HTMLInputElement).value
   searchQuery.value = value
-  if (value.length > 0) {
+  if (value.length >= 0) {
     currentPage.value = 1
     loadCheckouts()
   }

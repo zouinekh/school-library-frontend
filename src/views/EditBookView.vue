@@ -40,9 +40,9 @@ const saveChanges = async () => {
   if (!book.value) return
 
   try {
-    await libraryService.updateBook(book.value.id, editForm.value)
+    await libraryService.updateBook(book.value._id, editForm.value)
     message.success('Book updated successfully')
-    router.push(`/books/${book.value.id}`)
+    router.push(`/books/${book.value._id}`)
   } catch (error) {
     message.error('Failed to update book')
   }

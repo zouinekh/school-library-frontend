@@ -92,7 +92,7 @@ const columns: ColumnType<Book>[] = [
     <a-table
       :data-source="books"
       :columns="columns"
-      :row-key="(record: Book) => record.id"
+      :row-key="(record: Book) => record._id"
       :pagination="false"
       :scroll="{ x: 800 }"
       class="book-table"
@@ -100,12 +100,12 @@ const columns: ColumnType<Book>[] = [
       <template #bodyCell="{ column, record }: { column: ColumnType<Book>; record: Book }">
         <template v-if="column.key === 'actions'">
           <div class="action-buttons-container">
-            <a-button class="action-btn view-btn" @click="() => router.push(`/books/${record.id}`)">
+            <a-button class="action-btn view-btn" @click="() => router.push(`/books/${record._id}`)">
               <eye-outlined />
             </a-button>
             <a-button
               class="action-btn edit-btn"
-              @click="() => router.push(`/books/${record.id}/edit`)"
+              @click="() => router.push(`/books/${record._id}/edit`)"
             >
               <edit-outlined />
             </a-button>
@@ -113,7 +113,7 @@ const columns: ColumnType<Book>[] = [
               title="Are you sure you want to delete this book?"
               ok-text="Yes"
               cancel-text="No"
-              @confirm="emit('delete', record.id)"
+              @confirm="emit('delete', record._id)"
             >
               <a-button class="action-btn delete-btn">
                 <delete-outlined />
