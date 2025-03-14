@@ -6,7 +6,7 @@ import {
   SwapOutlined,
   DashboardOutlined,
   MenuFoldOutlined,
-  MenuUnfoldOutlined
+  MenuUnfoldOutlined,
 } from '@ant-design/icons-vue'
 
 const collapsed = ref(false)
@@ -57,9 +57,6 @@ const navigateTo = (path: string) => {
         <a-layout-content class="content">
           <slot></slot>
         </a-layout-content>
-        <a-layout-footer style="text-align: center">
-          School Library Management System ©{{ new Date().getFullYear() }}
-        </a-layout-footer>
       </a-layout>
     </a-layout>
   </div>

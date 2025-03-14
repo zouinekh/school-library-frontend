@@ -109,9 +109,16 @@ const columns: ColumnType<Book>[] = [
             >
               <edit-outlined />
             </a-button>
-            <a-button class="action-btn delete-btn" @click="emit('delete', record.id)">
-              <delete-outlined />
-            </a-button>
+            <a-popconfirm
+              title="Are you sure you want to delete this book?"
+              ok-text="Yes"
+              cancel-text="No"
+              @confirm="emit('delete', record.id)"
+            >
+              <a-button class="action-btn delete-btn">
+                <delete-outlined />
+              </a-button>
+            </a-popconfirm>
           </div>
         </template>
       </template>
