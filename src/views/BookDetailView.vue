@@ -36,7 +36,7 @@ onMounted(async () => {
           <a-descriptions-item label="Author" span="3">{{ book.author }}</a-descriptions-item>
           <a-descriptions-item label="Available Copies" span="3">
             <a-badge
-              :count="book.availableCopies"
+              :count="book.availableCopies > 0 ? book.availableCopies : 'o'"
               :color="book.availableCopies > 0 ? 'green' : 'red'"
             />
           </a-descriptions-item>

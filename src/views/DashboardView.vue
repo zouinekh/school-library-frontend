@@ -9,7 +9,7 @@ import type { Book, PaginatedResponse, Checkout } from '../types/library'
 
 const router = useRouter()
 const currentPage = ref(1)
-const pageSize = ref(5) // Reduced to show fewer books on dashboard
+const pageSize = ref(5)
 const totalItems = ref(0)
 const books = ref<Book[]>([])
 const recentCheckouts = ref<Checkout[]>([])
@@ -35,7 +35,7 @@ const loadDashboardData = async () => {
 const loadRecentCheckouts = async () => {
   checkoutsLoading.value = true
   try {
-    const response = await libraryService.getCheckouts(1, 5) // Get 5 most recent checkouts
+    const response = await libraryService.getCheckouts(1, 5)
     const data = response.data as PaginatedResponse<Checkout>
     recentCheckouts.value = data.data
   } catch (error) {
@@ -47,7 +47,7 @@ const loadRecentCheckouts = async () => {
 
 const handleSearch = (query: string) => {
   searchQuery.value = query
-  currentPage.value = 1 // Reset to first page when searching
+  currentPage.value = 1
   loadDashboardData()
 }
 
@@ -220,15 +220,5 @@ onMounted(() => {
 .pagination {
   margin-top: 16px;
   text-align: right;
-}
-
-@media (max-width: 576px) {
-  .dashboard-header h1 {
-    font-size: 20px;
-  }
-
-  .quick-actions-row .ant-btn {
-    margin-bottom: 8px;
-  }
 }
 </style>
