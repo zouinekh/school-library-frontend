@@ -40,8 +40,14 @@ The application connects to a backend API running on
 
 ## Project Structure
 
-- `/src/api` : API service layer
-- `/src/components` : Reusable Vue components
-- `/src/views` : Page components
-- `/src/router` : Vue Router configuration
-- `/src/types` : TypeScript type definitions
+school-library-frontend/
+├── src/
+│ ├── api/ # API service layer
+│ ├── assets/ # Static assets
+│ ├── components/ # Reusable Vue components
+│ ├── layouts/ # Layout components
+│ ├── router/ # Vue Router configuration
+│ ├── types/ # TypeScript type definitions
+│ ├── views/ # Page components
+│ ├── App.vue # Root component
+│ └── main.ts # Application entry point

@@ -54,7 +54,6 @@ export default {
     async createCheckout(checkout: Omit<Checkout, 'id' | 'checkoutDate'>): Promise<AxiosResponse<Checkout>> {
         return API.put('/checkouts', checkout);
     },
-
     async returnBook(id: string): Promise<AxiosResponse<Checkout>> {
         return API.patch(`/checkouts/${id}`);
     },
